@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Pix</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f1f5f2;
+      color: #222;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 20px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px #00000012;
+    }
+
+    h1 {
+      color: #168653;
+    }
+
+    .descricao {
+      color: #666;
+      line-height: 1.5;
+    }
+
+    #qrcode {
+      display: flex;
+      justify-content: center;
+      margin: 25px auto;
+    }
+
+    #qrcode img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .principal {
+      background: #168653;
+      color: white;
+    }
+
+    .secundario {
+      background: #e5f3eb;
+      color: #168653;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    #mensagem {
+      color: #168653;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>💚 Pague com Pix</h1>
+
+    <p class="descricao">
+      Escaneie o QR Code com o aplicativo do seu banco
+      ou copie o código Pix abaixo.
+      Confira os dados antes de pagar.
+    </p>
+
+    <div id="qrcode"></div>
+
+    <button class="principal" onclick="copiarPix()">
+      Copiar código Pix
+    </button>
+
+    <h3>Pix Copia e Cola</h3>
+
+    <textarea id="codigoPix" readonly>COLE_AQUI_SEU_CODIGO_PIX_COMPLETO</textarea>
+
+    <button class="secundario" onclick="compartilhar()">
+      Compartilhar página
+    </button>
+
+    <p id="mensagem"></p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    const campo = document.getElementById("codigoPix");
+    const codigo = campo.value.trim();
+
+    if (
+      codigo &&
+      codigo !== "COLE_AQUI_SEU_CODIGO_PIX_COMPLETO" &&
+      window.QRCode
+    ) {
+      new QRCode(document.getElementById("qrcode"), {
+        text: codigo,
+        width: 230,
+        height: 230
+      });
+    } else {
+      document.getElementById("qrcode").textContent =
+        "QR Code aparecerá após inserir um código Pix válido.";
+    }
+
+    async function copiarPix() {
+      try {
+        await navigator.clipboard.writeText(codigo);
+        document.getElementById("mensagem").textContent =
+          "Código Pix copiado!";
+      } catch (erro) {
+        campo.focus();
+        campo.select();
+        document.getElementById("mensagem").textContent =
+          "Selecione e copie o código Pix.";
+      }
+    }
+
+    async function compartilhar() {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Meu Pix",
+            url: window.location.href
+          });
+        } catch (erro) {}
+      } else {
+        document.getElementById("mensagem").textContent =
+          "Compartilhe o endereço desta página.";
+      }
+    }
+  </script>
+
+</body>
+</html>
